@@ -1,6 +1,14 @@
 defmodule Servy.Handler do
+
+  @moduledoc """
+  This module handles the request and response cycle.
+  """
+
   require Logger
 
+  @pages_path Path.expand("../../pages", __DIR__)
+
+  @doc "Transforms the request into a response"
   def handle(request) do
     request
     |> parse
@@ -52,7 +60,7 @@ defmodule Servy.Handler do
   end
 
   def route(%{method: "GET", path: "/bears/new"} = conv) do
-    Path.expand("../../pages", __DIR__)
+    @pages_path
     |> Path.join("form.html")
     |> File.read
     |> handle_file(conv)
@@ -67,7 +75,7 @@ defmodule Servy.Handler do
   end
 
   def route(%{method: "GET", path: "/about"} = conv) do
-    Path.expand("../../pages", __DIR__)
+    @pages_path
     |> Path.join("about.html")
     |> File.read
     |> handle_file(conv)
@@ -75,7 +83,7 @@ defmodule Servy.Handler do
 
   # That won't be good on a production server
   def route(%{method: "GET", path: "/pages/" <> file} = conv) do
-    Path.expand("../../pages", __DIR__)
+    @pages_path
     |> Path.join(file <> ".html")
     |> File.read
     |> handle_file(conv)
@@ -97,6 +105,7 @@ defmodule Servy.Handler do
     %{ conv | status: 500, resp_body: "File error #{reason}" }
   end
 
+  @doc "Logs 404 requests"
   def track(%{status: 404, path: path} = conv) do
     Logger.warning "Warning: #{path} was not found"
     conv
