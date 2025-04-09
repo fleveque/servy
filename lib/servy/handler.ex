@@ -163,6 +163,8 @@ POST /bears HTTP/1.1
 Host: example.com
 User-Agent: ExampleBrowser/1.0
 Accept: */*
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 27
 
 name=Baloo&type=Brown
 """
