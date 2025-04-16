@@ -6,7 +6,7 @@ defmodule Servy.Parser do
   alias Servy.Conv
 
   def parse(request) do
-    [top, params_string] = String.split(request, "\n\n", parts: 2)
+    [top, params_string] = String.split(request, "\r\n\r\n", parts: 2)
 
     [request_line | header_lines] = String.split(top, "\n")
 
@@ -24,6 +24,7 @@ defmodule Servy.Parser do
      }
   end
 
+  # Using recursion
   # defp parse_headers([head | tail], headers) do
   #   [key, value] = String.split(head, ": ")
   #   headers = Map.put(headers, key, value)
@@ -32,18 +33,31 @@ defmodule Servy.Parser do
 
   # defp parse_headers([], headers), do: headers
 
-  defp parse_headers(header_lines) do
+  # Using Enum.reduce
+  def parse_headers(header_lines) do
     Enum.reduce(header_lines, %{}, fn header_line, headers_acc ->
       [key, value] = String.split(header_line, ": ")
-      Map.put(headers_acc, key, value)
+      Map.put(headers_acc, key, String.trim(value))
     end)
   end
 
-  defp parse_params("application/x-www-form-urlencoded", params_string) do
+  @doc """
+  Parses the parameters from the request body based on the content type.
+
+  ## Examples
+
+      iex> json_string = ~s({"name": "Baloo", "type": "Brown"})
+      iex> Servy.Parser.parse_params("application/json", json_string)
+      %{}
+
+      iex> Servy.Parser.parse_params("application/x-www-form-urlencoded", "name=Baloo&type=Brown")
+      %{"name" => "Baloo", "type" => "Brown"}
+  """
+  def parse_params("application/x-www-form-urlencoded", params_string) do
     params_string
     |> String.trim
     |> URI.decode_query
   end
 
-  defp parse_params(_, _), do: %{}
+  def parse_params(_, _), do: %{}
 end

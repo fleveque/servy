@@ -23,17 +23,24 @@ defmodule Servy.Plugins do
 
   defp rewrite_path_captures(%Conv{} = conv, nil), do: conv
 
-  def log(%Conv{} = conv), do: IO.inspect conv
+  def log(%Conv{} = conv) do
+    if Mix.env == :dev do
+      IO.inspect conv
+    end
+    conv
+  end
 
   @doc "Logs 404 requests"
   def track(%Conv{status: 404, path: path} = conv) do
-    Logger.warning "Warning: #{path} was not found"
+    if Mix.env != :test do
+      Logger.warning "Warning: #{path} was not found"
+    end
     conv
   end
 
   def track(%Conv{} = conv), do: conv
 
-  def emojify(%Conv{status: 200} = conv) do
+  def emojify(%Conv{status: 999} = conv) do
     emojies = String.duplicate("🎉", 5)
     %{ conv | resp_body: emojies <> "\n" <> conv.resp_body  <> "\n" <> emojies }
   end
