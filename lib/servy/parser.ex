@@ -48,7 +48,7 @@ defmodule Servy.Parser do
 
       iex> json_string = ~s({"name": "Baloo", "type": "Brown"})
       iex> Servy.Parser.parse_params("application/json", json_string)
-      %{}
+      %{"name" => "Baloo", "type" => "Brown"}
 
       iex> Servy.Parser.parse_params("application/x-www-form-urlencoded", "name=Baloo&type=Brown")
       %{"name" => "Baloo", "type" => "Brown"}
@@ -57,6 +57,11 @@ defmodule Servy.Parser do
     params_string
     |> String.trim
     |> URI.decode_query
+  end
+
+  def parse_params("application/json", params_string) do
+    params_string
+    |> Poison.Parser.parse!(%{})
   end
 
   def parse_params(_, _), do: %{}
