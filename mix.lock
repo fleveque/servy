@@ -1,4 +1,6 @@
 %{
   "earmark": {:hex, :earmark, "1.4.47", "7e7596b84fe4ebeb8751e14cbaeaf4d7a0237708f2ce43630cfd9065551f94ca", [:mix], [], "hexpm", "3e96bebea2c2d95f3b346a7ff22285bc68a99fbabdad9b655aa9c6be06c698f8"},
+  "observer_cli": {:hex, :observer_cli, "1.8.3", "866ee083eb3482d5f40d301c2ac7e1df0b6061d02ae771e164d71931d3c687c4", [:mix, :rebar3], [{:recon, "~> 2.5.6", [hex: :recon, repo: "hexpm", optional: false]}], "hexpm", "041c638d54cc8265e6e0472aec7c17a83bb2c4a02628ddedd9138747d9d0b8bf"},
   "poison": {:hex, :poison, "5.0.0", "d2b54589ab4157bbb82ec2050757779bfed724463a544b6e20d79855a9e43b24", [:mix], [{:decimal, "~> 2.0", [hex: :decimal, repo: "hexpm", optional: true]}], "hexpm", "11dc6117c501b80c62a7594f941d043982a1bd05a1184280c0d9166eb4d8d3fc"},
+  "recon": {:hex, :recon, "2.5.6", "9052588e83bfedfd9b72e1034532aee2a5369d9d9343b61aeb7fbce761010741", [:mix, :rebar3], [], "hexpm", "96c6799792d735cc0f0fd0f86267e9d351e63339cbe03df9d162010cefc26bb0"},
 }

@@ -16,7 +16,7 @@ Accept: */*\r
 \r
 """
 
-#spawn(fn -> Servy.HttpServer.start(4000) end)
+# spawn(fn -> Servy.HttpServer.start(4000) end)
 
-response = Servy.HttpClient.send_request(request)
-IO.puts response
+# response = Servy.HttpClient.send_request(request)
+# IO.puts response
