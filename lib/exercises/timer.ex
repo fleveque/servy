@@ -7,7 +7,7 @@ defmodule Timer do
   end
 end
 
-Timer.remind("Hello!", 5)
-Timer.remind("Goodbye!", 10)
+# Timer.remind("Hello!", 5)
+# Timer.remind("Goodbye!", 10)
 
-:timer.sleep(:infinity)
+# :timer.sleep(:infinity)

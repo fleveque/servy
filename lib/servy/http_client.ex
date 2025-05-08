@@ -8,7 +8,7 @@ defmodule Servy.HttpClient do
   end
 end
 
-request ="""
+_request ="""
 GET /bears HTTP/1.1\r
 Host: example.com\r
 User-Agent: ExampleBrowser/1.0\r
