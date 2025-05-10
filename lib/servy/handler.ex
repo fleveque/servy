@@ -30,9 +30,9 @@ defmodule Servy.Handler do
   def route(%Conv{ method: "GET", path: "/snapshots" } = conv) do
     parent_pid = self()
 
-    spawn(fn -> send(parent_pid, {:result, VideoCam.get_snapshot("cam-1")} end)
-    spawn(fn -> send(parent_pid, {:result, VideoCam.get_snapshot("cam-2")} end)
-    spawn(fn -> send(parent_pid, {:result, VideoCam.get_snapshot("cam-3")} end)
+    spawn(fn -> send(parent_pid, {:result, VideoCam.get_snapshot("cam-1")}) end)
+    spawn(fn -> send(parent_pid, {:result, VideoCam.get_snapshot("cam-2")}) end)
+    spawn(fn -> send(parent_pid, {:result, VideoCam.get_snapshot("cam-3")}) end)
 
     snapshot1 = receive do {:result, snapshot} -> snapshot end
     snapshot2 = receive do {:result, snapshot} -> snapshot end
