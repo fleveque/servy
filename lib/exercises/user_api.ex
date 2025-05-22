@@ -1,24 +1,32 @@
 defmodule UserAPI do
-  def query(user_id) do
-    url = "https://jsonplaceholder.typicode.com/users/#{user_id}"
-    headers = [{"Content-Type", "application/json"}]
-
-    case HTTPoison.get(url, headers) do
-      {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
-        city = Poison.Parser.parse!(body, %{}) |>
-               get_in(["address", "city"])
-        {:ok, city}
-
-      {:ok, %HTTPoison.Response{status_code: status_code}} ->
-        {:error, "Error: #{status_code}"}
-
-      {:error, %HTTPoison.Error{reason: reason}} ->
-        {:error, "Error: #{reason}"}
-    end
+  def query(id) do
+    api_url(id)
+    |> HTTPoison.get(headers())
+    |> handle_response
   end
 
-  def run do
-    case query("1") do
+  defp api_url(id) do
+    "https://jsonplaceholder.typicode.com/users/#{URI.encode(id)}"
+  end
+
+  defp headers do
+    [{"Content-Type", "application/json"}]
+  end
+
+  defp handle_response({:ok, %HTTPoison.Response{status_code: 200, body: body}}) do
+    city = Poison.Parser.parse!(body, %{})
+           |> get_in(["address", "city"])
+    {:ok, city}
+  end
+  defp handle_response({:ok, %HTTPoison.Response{status_code: status_code}}) do
+    {:error, "Error: #{status_code}"}
+  end
+  defp handle_response({:error, %HTTPoison.Error{reason: reason}}) do
+    {:error, "Error: #{reason}"}
+  end
+
+  def run(id) do
+    case query(id) do
       {:ok, city} ->
         city
       {:error, error} ->
