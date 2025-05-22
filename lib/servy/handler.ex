@@ -12,7 +12,7 @@ defmodule Servy.Handler do
 
   alias Servy.Conv
   alias Servy.BearController
-  alias Servy.VideoCam
+  alias Servy.Fetcher
 
   @doc "Transforms the request into a response"
   def handle(request) do
@@ -27,20 +27,17 @@ defmodule Servy.Handler do
     |> format_response
   end
 
-  def route(%Conv{ method: "GET", path: "/snapshots" } = conv) do
-    parent_pid = self()
+  def route(%Conv{ method: "GET", path: "/sensors" } = conv) do
+    pid4 = Fetcher.async(fn -> Servy.Tracker.get_location("bigfoot") end)
 
-    spawn(fn -> send(parent_pid, {:result, VideoCam.get_snapshot("cam-1")}) end)
-    spawn(fn -> send(parent_pid, {:result, VideoCam.get_snapshot("cam-2")}) end)
-    spawn(fn -> send(parent_pid, {:result, VideoCam.get_snapshot("cam-3")}) end)
+    snapshots =
+      ["cam-1", "cam-2", "cam-3"]
+      |> Enum.map(&Fetcher.async(fn -> Servy.VideoCam.get_snapshot(&1) end))
+      |> Enum.map(&Fetcher.get_result/1)
 
-    snapshot1 = receive do {:result, snapshot} -> snapshot end
-    snapshot2 = receive do {:result, snapshot} -> snapshot end
-    snapshot3 = receive do {:result, snapshot} -> snapshot end
+    where_is_bigfoot = Fetcher.get_result(pid4)
 
-    snapshots = [snapshot1, snapshot2, snapshot3]
-
-    %{ conv | status: 200, resp_body: inspect snapshots}
+    %{ conv | status: 200, resp_body: inspect {snapshots, where_is_bigfoot} }
   end
 
   def route(%Conv{ method: "GET", path: "/kaboom" } = _conv) do
