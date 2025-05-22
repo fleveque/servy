@@ -1,4 +1,4 @@
-defmodule Timer do
+defmodule Exercises.Timer do
   def remind(message, seconds) do
     spawn(fn ->
       :timer.sleep(seconds * 1000)

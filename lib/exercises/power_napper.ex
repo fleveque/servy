@@ -1,4 +1,4 @@
-defmodule PowerNapper do
+defmodule Exercises.PowerNapper do
   def run do
     power_nap = fn ->
       time = :rand.uniform(10_000)
