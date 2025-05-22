@@ -1,27 +1,25 @@
 defmodule HttpServerTest do
   use ExUnit.Case, async: true
   alias  Servy.HttpServer
-  alias Servy.HttpClient
 
   test "accepts a request on a socket and sends back a response" do
     spawn(HttpServer, :start, [4000])
 
-    request = """
-    GET /wildthings HTTP/1.1\r
-    Host: example.com\r
-    User-Agent: ExampleBrowser/1.0\r
-    Accept: */*\r
-    \r
-    """
+    parent_pid = self()
+    max_concurrent_requests = 5
+    for _ <- 1..max_concurrent_requests do
+      spawn(fn ->
+        {:ok, response} = HTTPoison.get "http://localhost:4000/wildthings"
+        send(parent_pid, {:ok, response})
+      end)
+    end
 
-    response = HttpClient.send_request(request)
-
-    assert response == """
-    HTTP/1.1 200 OK\r
-    Content-Type: text/html\r
-    Content-Length: 20\r
-    \r
-    Bears, Lions, Tigers
-    """
+    for _ <- 1..max_concurrent_requests do
+      receive do
+        {:ok, response} ->
+          assert response.status_code == 200
+          assert response.body == "Bears, Lions, Tigers"
+      end
+    end
   end
 end
