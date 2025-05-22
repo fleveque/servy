@@ -5,9 +5,21 @@ defmodule HttpServerTest do
   test "accepts a request on a socket and sends back a response" do
     spawn(HttpServer, :start, [4000])
 
-    {:ok, response} = HTTPoison.get "http://localhost:4000/wildthings"
+    parent_pid = self()
+    max_concurrent_requests = 5
+    for _ <- 1..max_concurrent_requests do
+      spawn(fn ->
+        {:ok, response} = HTTPoison.get "http://localhost:4000/wildthings"
+        send(parent_pid, {:ok, response})
+      end)
+    end
 
-    assert response.status_code == 200
-    assert response.body == "Bears, Lions, Tigers"
+    for _ <- 1..max_concurrent_requests do
+      receive do
+        {:ok, response} ->
+          assert response.status_code == 200
+          assert response.body == "Bears, Lions, Tigers"
+      end
+    end
   end
 end
