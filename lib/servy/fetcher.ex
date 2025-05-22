@@ -1,3 +1,5 @@
+# Unused code
+# Was an example of how Task.async and Task.await works
 defmodule Servy.Fetcher do
 
   def async(fun) do
