@@ -9,6 +9,7 @@ defmodule Servy.Handler do
   import Servy.Plugins, only: [rewrite_path: 1, log: 1, track: 1, emojify: 1]
   import Servy.Parser, only: [parse: 1]
   import Servy.FileHandler, only: [handle_file: 2]
+  import Servy.View, only: [render: 3]
 
   alias Servy.Conv
   alias Servy.BearController
@@ -36,13 +37,13 @@ defmodule Servy.Handler do
 
     where_is_bigfoot = Task.await(task)
     # Task.yield(task, 5000) could be used as well using a case statement
-    # Task.await(task, 5000) # This will wait for 5 seconds for the task to finish
+    # Task.await(task, :timer.seconds(5)) # This will wait for 5 seconds for the task to finish
     # Task.shutdown(task) # This will kill the task if it is still running
     # Task.shutdown(task, :brutal_kill) # This will kill the task immediately
     # Task.shutdown(task, :normal) # This will kill the task gracefully
     # Task.shutdown(task, :infinity) # This will wait for the task to finish
 
-    %{ conv | status: 200, resp_body: inspect {snapshots, where_is_bigfoot} }
+    render(conv, "sensors.eex", snapshots: snapshots, location: where_is_bigfoot)
   end
 
   def route(%Conv{ method: "GET", path: "/kaboom" } = _conv) do
