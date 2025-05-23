@@ -1,4 +1,4 @@
-defmodule UserAPI do
+defmodule Exercises.UserAPI do
   def query(id) do
     api_url(id)
     |> HTTPoison.get(headers())
