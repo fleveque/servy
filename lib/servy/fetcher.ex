@@ -13,6 +13,8 @@ defmodule Servy.Fetcher do
       # We use the pin operator (^) to match only messages from the specific spawned process (pid),
       # ensuring we don't accidentally receive messages from other processes.
       {^pid, :result, value} -> value
+    after
+      :timer.seconds(5) -> {:error, "Timeout"}
     end
   end
 end

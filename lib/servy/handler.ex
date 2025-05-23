@@ -35,6 +35,12 @@ defmodule Servy.Handler do
       |> Enum.map(&Task.await/1)
 
     where_is_bigfoot = Task.await(task)
+    # Task.yield(task, 5000) could be used as well using a case statement
+    # Task.await(task, 5000) # This will wait for 5 seconds for the task to finish
+    # Task.shutdown(task) # This will kill the task if it is still running
+    # Task.shutdown(task, :brutal_kill) # This will kill the task immediately
+    # Task.shutdown(task, :normal) # This will kill the task gracefully
+    # Task.shutdown(task, :infinity) # This will wait for the task to finish
 
     %{ conv | status: 200, resp_body: inspect {snapshots, where_is_bigfoot} }
   end
