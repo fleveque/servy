@@ -4,9 +4,9 @@ defmodule Servy.PledgeServer do
 
   # Client Interface
 
-  def start do
+  def start(initial_state \\ []) do
     IO.puts "Starting PledgeServer..."
-    pid = spawn(__MODULE__, :listen_loop, [[]])
+    pid = spawn(__MODULE__, :listen_loop, [initial_state])
     Process.register(pid, @name)
     pid
   end
@@ -64,6 +64,8 @@ end
 alias Servy.PledgeServer
 
 pid = PledgeServer.start()
+IO.inspect Process.whereis(:pledge_server)
+IO.inspect Process.registered() |> Enum.count()
 
 IO.inspect PledgeServer.create_pledge "larry", 10
 IO.inspect PledgeServer.create_pledge "curly", 30
