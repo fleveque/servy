@@ -16,7 +16,7 @@ defmodule Servy.PledgeServer do
   end
 
   def stop do
-    if pid = Process.whereis(:pledge_server) do
+    if pid = Process.whereis(@name) do
       Process.exit(pid, :normal)
     end
     :ok

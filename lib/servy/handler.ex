@@ -27,6 +27,12 @@ defmodule Servy.Handler do
     |> format_response
   end
 
+  def route(%Conv{ method: "GET", path: "/404s" } = conv) do
+    counts = Servy.FourOhFourCounter.get_counts()
+
+    %{ conv | status: 200, resp_body: inspect counts }
+  end
+
   def route(%Conv{ method: "GET", path: "/sensors" } = conv) do
     task = Task.async(fn -> Servy.Tracker.get_location("bigfoot") end)
 
