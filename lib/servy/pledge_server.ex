@@ -6,9 +6,20 @@ defmodule Servy.PledgeServer do
 
   def start(initial_state \\ []) do
     IO.puts "Starting PledgeServer..."
+    # Ensure no process is registered before starting
+    if pid = Process.whereis(@name) do
+      Process.unregister(@name)
+    end
     pid = spawn(__MODULE__, :listen_loop, [initial_state])
     Process.register(pid, @name)
     pid
+  end
+
+  def stop do
+    if pid = Process.whereis(:pledge_server) do
+      Process.exit(pid, :normal)
+    end
+    :ok
   end
 
   def create_pledge(name, amount) do
