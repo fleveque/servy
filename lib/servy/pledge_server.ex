@@ -7,7 +7,7 @@ defmodule Servy.PledgeServer do
   def start(initial_state \\ []) do
     IO.puts "Starting PledgeServer..."
     # Ensure no process is registered before starting
-    if pid = Process.whereis(@name) do
+    if Process.whereis(@name) do
       Process.unregister(@name)
     end
     pid = spawn(__MODULE__, :listen_loop, [initial_state])

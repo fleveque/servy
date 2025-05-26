@@ -7,7 +7,7 @@ defmodule Servy.FourOhFourCounter do
   def start do
     IO.puts "Starting FourOhFourCounter..."
     # Ensure no process is registered before starting
-    if pid = Process.whereis(@name) do
+    if Process.whereis(@name) do
       Process.unregister(@name)
     end
     pid = spawn(__MODULE__, :listen_loop, [%{}])
