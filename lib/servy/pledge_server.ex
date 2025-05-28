@@ -43,6 +43,12 @@ alias ElixirSense.Core.Compiler.State
 
   # Server callbacks
 
+  def init(state) do
+    pledges = fetch_recent_pledges_from_service()
+    new_state = %State{state | pledges: pledges}
+    {:ok, new_state}
+  end
+
   def handle_call({:create_pledge, name, amount}, _from, state) do
     {:ok, id} = send_pledge_to_service(name, amount)
     most_recent_pledges = Enum.take(state.pledges, state.cache_size - 1)
@@ -69,10 +75,22 @@ alias ElixirSense.Core.Compiler.State
     {:noreply, %State{state | cache_size: size}}
   end
 
+  def handle_info(message, state) do
+    IO.puts "Ooops: #{inspect(message)}"
+    {:noreply, state}
+  end
+
   defp send_pledge_to_service(_name, _amount) do
     # Simulate sending the pledge to an external service
     {:ok, "pledge-#{:rand.uniform(1000)}"}
   end
+
+  defp fetch_recent_pledges_from_service do
+  # CODE GOES HERE TO FETCH RECENT PLEDGES FROM EXTERNAL SERVICE
+
+  # Example return value:
+  [ {"wilma", 15}, {"fred", 25} ]
+end
 end
 
 alias Servy.PledgeServer
@@ -97,5 +115,5 @@ PledgeServer.clear()
 IO.inspect PledgeServer.recent_pledges
 IO.inspect PledgeServer.total_pledged
 
-# IO.inspect send pid, {:stop, "Unexpected message"}
+IO.inspect send pid, {:stop, "Unexpected message"}
 IO.inspect Process.info(pid, :messages)
