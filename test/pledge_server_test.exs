@@ -5,6 +5,7 @@ defmodule PledgeServerTest do
 
   setup do
     PledgeServer.start()
+    PledgeServer.clear()
     :ok
   end
 

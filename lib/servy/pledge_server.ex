@@ -1,58 +1,72 @@
 defmodule Servy.PledgeServer do
+alias ElixirSense.Core.Compiler.State
 
   @name :pledge_server
 
-  alias Servy.GenericServer
+  use GenServer
+
+  defmodule State do
+    defstruct cache_size: 3, pledges: []
+  end
 
   # Client Interface
 
   def start do
     IO.puts "Starting PledgeServer..."
-    GenericServer.start(__MODULE__, @name, [])
+    GenServer.start(__MODULE__, %State{}, name: @name)
   end
 
   def stop() do
     IO.puts "Stopping PledgeServer..."
-    GenericServer.stop(@name)
+    GenServer.stop(@name)
   end
 
   def create_pledge(name, amount) do
-    GenericServer.call @name, {:create_pledge, name, amount}
+    GenServer.call @name, {:create_pledge, name, amount}
   end
 
   def recent_pledges do
-    GenericServer.call @name, :recent_pledges
+    GenServer.call @name, :recent_pledges
   end
 
   def total_pledged do
-    GenericServer.call @name, :total_pledged
+    GenServer.call @name, :total_pledged
   end
 
   def clear do
-    GenericServer.cast @name, :clear
+    GenServer.cast @name, :clear
+  end
+
+  def set_cache_size(size) when is_integer(size) and size > 0 do
+    GenServer.cast @name, {:set_cache_size, size}
   end
 
   # Server callbacks
 
-  def handle_call({:create_pledge, name, amount}, state) do
+  def handle_call({:create_pledge, name, amount}, _from, state) do
     {:ok, id} = send_pledge_to_service(name, amount)
-    most_recent_pledges = Enum.take(state, 2)
-    new_state = [{name, amount} | most_recent_pledges]
-    {id, new_state}
+    most_recent_pledges = Enum.take(state.pledges, state.cache_size - 1)
+    cached_pledges = [{name, amount} | most_recent_pledges]
+    new_state = %State{state | pledges: cached_pledges}
+    {:reply, id, new_state}
   end
 
-  def handle_call(:recent_pledges, state) do
-    {state, state}
+  def handle_call(:recent_pledges, _from, state) do
+    {:reply, state.pledges, state}
   end
 
-  def handle_call(:total_pledged, state) do
-    total = Enum.map(state, &elem(&1, 1)) |> Enum.sum()
-    {total, state}
+  def handle_call(:total_pledged, _from, state) do
+    total = Enum.map(state.pledges, &elem(&1, 1)) |> Enum.sum()
+    {:reply, total, state}
   end
 
-  def handle_cast(:clear, _state) do
+  def handle_cast(:clear, state) do
     IO.puts "Clearing pledges..."
-    []
+    {:noreply, %State{state | pledges: []}}
+  end
+
+  def handle_cast({:set_cache_size, size}, state) do
+    {:noreply, %State{state | cache_size: size}}
   end
 
   defp send_pledge_to_service(_name, _amount) do
@@ -63,9 +77,11 @@ end
 
 alias Servy.PledgeServer
 
-pid = PledgeServer.start
+{:ok, pid} = PledgeServer.start
 IO.inspect Process.whereis(:pledge_server)
 IO.inspect Process.registered() |> Enum.count()
+
+PledgeServer.set_cache_size(5)
 
 IO.inspect PledgeServer.create_pledge "larry", 10
 IO.inspect PledgeServer.create_pledge "curly", 30
@@ -81,5 +97,5 @@ PledgeServer.clear()
 IO.inspect PledgeServer.recent_pledges
 IO.inspect PledgeServer.total_pledged
 
-IO.inspect send pid, {:stop, "Unexpected message"}
+# IO.inspect send pid, {:stop, "Unexpected message"}
 IO.inspect Process.info(pid, :messages)
