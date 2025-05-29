@@ -9,10 +9,21 @@ defmodule Servy.SensorServer do
               refresh_interval: :timer.minutes(60)
   end
 
+  # def child_spec(:frequent) do
+  #   %{id: Servy.PledgeServer, restart: :permanent, shutdown: 5000,
+  #   start: {Servy.PledgeServer, :start_link, [[1]]}, type: :worker}
+  # end
+  # def child_spec(_) do
+  #   %{id: Servy.PledgeServer, restart: :permanent, shutdown: 5000,
+  #   start: {Servy.PledgeServer, :start_link, [[]]}, type: :worker}
+  # end
+
   # Client Interface
 
-  def start do
-    GenServer.start(__MODULE__, %State{}, name: @name)
+  def start_link(interval) do
+    IO.puts "Starting SensorServer with #{interval} min refresh..."
+    time_in_ms = :timer.minutes(interval)
+    GenServer.start_link(__MODULE__, %State{refresh_interval: time_in_ms}, name: @name)
   end
 
   def get_sensor_data do

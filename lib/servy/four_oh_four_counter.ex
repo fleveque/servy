@@ -6,9 +6,9 @@ defmodule Servy.FourOhFourCounter do
 
   # Client Interface
 
-  def start do
+  def start_link(_arg) do
     IO.puts "Starting FourOhFourCounter..."
-    GenServer.start(__MODULE__, %{}, name: @name)
+    GenServer.start_link(__MODULE__, %{}, name: @name)
   end
 
   def stop do
@@ -35,7 +35,6 @@ defmodule Servy.FourOhFourCounter do
   # Server Callbacks
 
   def init(_args) do
-    IO.puts "Initializing FourOhFourCounter..."
     {:ok, %{}}
   end
 
