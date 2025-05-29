@@ -34,7 +34,8 @@ defmodule Servy.KickStarter do
     if Process.whereis(:http_server) do
       Process.unregister(:http_server)
     end
-    pid = spawn_link(Servy.HttpServer, :start, [4000])
+    port = Application.get_env(:servy, :http_port, 4000)
+    pid = spawn_link(Servy.HttpServer, :start, [port])
     Process.register(pid, :http_server)
   end
 end
