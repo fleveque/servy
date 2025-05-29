@@ -3,17 +3,22 @@ alias ElixirSense.Core.Compiler.State
 
   @name :pledge_server
 
-  use GenServer
+  use GenServer #, restart: :permanent
 
   defmodule State do
     defstruct cache_size: 3, pledges: []
   end
 
+  # def child_spec(_arg) do
+  #   %{id: Servy.PledgeServer, restart: :permanent, shutdown: 5000,
+  #   start: {Servy.PledgeServer, :start_link, [[]]}, type: :worker}
+  # end
+
   # Client Interface
 
-  def start do
+  def start_link(_args) do
     IO.puts "Starting PledgeServer..."
-    GenServer.start(__MODULE__, %State{}, name: @name)
+    GenServer.start_link(__MODULE__, %State{}, name: @name)
   end
 
   def stop() do
@@ -97,7 +102,8 @@ end
 
 alias Servy.PledgeServer
 
-{:ok, pid} = PledgeServer.start
+
+{:ok, pid} = PledgeServer.start_link([])
 IO.inspect Process.whereis(:pledge_server)
 IO.inspect Process.registered() |> Enum.count()
 
