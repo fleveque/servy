@@ -17,7 +17,7 @@ defmodule Servy.MixProject do
     [
       extra_applications: [:logger, :eex],
       mod: {Servy, []},
-      env: [http_port: 4004]
+      env: [http_port: 4000]
     ]
   end
 
