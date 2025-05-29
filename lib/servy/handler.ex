@@ -34,20 +34,9 @@ defmodule Servy.Handler do
   end
 
   def route(%Conv{ method: "GET", path: "/sensors" } = conv) do
-    task = Task.async(fn -> Servy.Tracker.get_location("bigfoot") end)
-
-    snapshots =
-      ["cam-1", "cam-2", "cam-3"]
-      |> Enum.map(&Task.async(fn -> Servy.VideoCam.get_snapshot(&1) end))
-      |> Enum.map(&Task.await/1)
-
-    where_is_bigfoot = Task.await(task)
-    # Task.yield(task, 5000) could be used as well using a case statement
-    # Task.await(task, :timer.seconds(5)) # This will wait for 5 seconds for the task to finish
-    # Task.shutdown(task) # This will kill the task if it is still running
-    # Task.shutdown(task, :brutal_kill) # This will kill the task immediately
-    # Task.shutdown(task, :normal) # This will kill the task gracefully
-    # Task.shutdown(task, :infinity) # This will wait for the task to finish
+    sensor_data = Servy.SensorServer.get_sensor_data()
+    where_is_bigfoot = sensor_data.location
+    snapshots = sensor_data.snapshots
 
     render(conv, "sensors.eex", snapshots: snapshots, location: where_is_bigfoot)
   end

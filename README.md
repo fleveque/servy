@@ -9,5 +9,6 @@ To start the auxiliar processes and the HTTP server on port 4000, run the follow
 ```elixir
 Servy.FourOhFourCounter.start()
 Servy.PledgeServer.start()
+Servy.SensorServer.start()
 spawn(Servy.HttpServer, :start, [4000])
 ```
