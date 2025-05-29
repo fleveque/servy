@@ -1,7 +1,9 @@
 defmodule Servy do
-  def hello(name) do
-    "Hello, #{name}!"
+  use Application
+
+  def start(_type, _args) do
+    IO.puts("Starting the Servy application...")
+
+    Servy.Supervisor.start_link()
   end
 end
-
-# IO.puts Servy.hello("world")
