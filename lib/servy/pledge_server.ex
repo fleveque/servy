@@ -72,7 +72,9 @@ alias ElixirSense.Core.Compiler.State
   end
 
   def handle_cast({:set_cache_size, size}, state) do
-    {:noreply, %State{state | cache_size: size}}
+    resized_cache = Enum.take(state.pledges, size)
+    new_state = %{state | cache_size: size, pledges: resized_cache}
+    {:noreply, new_state}
   end
 
   def handle_info(message, state) do
@@ -86,11 +88,11 @@ alias ElixirSense.Core.Compiler.State
   end
 
   defp fetch_recent_pledges_from_service do
-  # CODE GOES HERE TO FETCH RECENT PLEDGES FROM EXTERNAL SERVICE
+    # CODE GOES HERE TO FETCH RECENT PLEDGES FROM EXTERNAL SERVICE
 
-  # Example return value:
-  [ {"wilma", 15}, {"fred", 25} ]
-end
+    # Example return value:
+    [ {"wilma", 15}, {"fred", 25} ]
+  end
 end
 
 alias Servy.PledgeServer
