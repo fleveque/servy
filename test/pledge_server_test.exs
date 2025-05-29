@@ -4,7 +4,7 @@ defmodule PledgeServerTest do
   alias Servy.PledgeServer
 
   setup do
-    PledgeServer.start()
+    PledgeServer.start_link([])
     PledgeServer.clear()
     :ok
   end

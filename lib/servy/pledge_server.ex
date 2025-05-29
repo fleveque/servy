@@ -16,7 +16,7 @@ alias ElixirSense.Core.Compiler.State
 
   # Client Interface
 
-  def start_link(_args) do
+  def start_link(_arg) do
     IO.puts "Starting PledgeServer..."
     GenServer.start_link(__MODULE__, %State{}, name: @name)
   end
