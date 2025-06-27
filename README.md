@@ -7,5 +7,11 @@ Servy is the work in progress following PragmaticStudio Elixir course
 To start the auxiliar processes and the HTTP server on port 4000, run the following in your Elixir shell:
 
 ```elixir
-{:ok, sup_pid} = Servy.Supervisor.start_link()
+mix run --no-halt
+```
+
+In order to change the http port, you can modify mix.exs or run:
+
+```elixir
+elixir --erl "-servy port 5000" -S mix run --no-halt
 ```
