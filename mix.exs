@@ -15,7 +15,7 @@ defmodule Servy.MixProject do
   # Run "mix help compile.app" to learn about applications.
   def application do
     [
-      extra_applications: [:logger, :eex],
+      extra_applications: [:logger, :eex, :wx, :observer, :runtime_tools],
       mod: {Servy, []},
       env: [http_port: 4000]
     ]
